@@ -37,6 +37,14 @@
         <script src="assets/js/plugins/amcharts/dataloader.js"></script>
         <script src="assets/js/plugins/amcharts/themes/light.js"></script>
         <script src="assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+        <script src="assets/js/plugins/easypiechart/jquery.easypiechart.js"></script>
+        <script type="text/javascript">
+        $(function() {
+            $('.chart').easyPieChart({
+                //your configuration goes here
+            });
+        });
+        </script>
         
         <!-- Page JS Code -->
         <script src="assets/js/pages/clarkumicrogrid.js"></script>
@@ -63,54 +71,47 @@
 				<!-- Page Content -->
 				<div class="content">
 					<!-- System Status -->
-					<div class="row">
-						<div class="col-sm-6 col-lg-3">
-	                        <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
-	                        	<div class="block-content block-content-full block-content-mini">
-	                        		<div class="h5 push-5-t">The system status is:</div>
-	                            </div>
-	                            <div class="block-content block-content-full bg-success">
-	                                <div class="h1 font-w700 text-white">GOOD</div>                           
-	                            </div>	                            
-	                        </a>
-	                    </div>
-	                    <div class="col-sm-6 col-lg-3">
-	                        <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
-	                        	<div class="block-content block-content-full block-content-mini">
-	                        		<div class="h5 push-5-t">Earnings</div>
-	                            </div>
-	                            <div class="block-content block-content-full bg-success">
-	                                <div class="h1 font-w700 text-white"><span class="h2 text-white-op">$</span> 2.980,00</div>                      
-	                            </div>	                            
-	                        </a>
-	                    </div>
-	                    <div class="col-sm-6 col-lg-3">
-	                        <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
-	                        	<div class="block-content block-content-full block-content-mini">
-	                        		<div class="h5 push-5-t">Earnings</div>
-	                            </div>
-	                            <div class="block-content block-content-full bg-success">
-	                                <div class="h1 font-w700 text-white"><span class="h2 text-white-op">$</span> 2.980,00</div>                       
-	                            </div>	                            
-	                        </a>
-	                    </div>
-	                    <div class="col-sm-6 col-lg-3">
-	                        <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
-	                        	<div class="block-content block-content-full block-content-mini">
-	                        		<div class="h5 push-5-t">Earnings</div>
-	                            </div>
-	                            <div class="block-content block-content-full bg-success">
-	                                <div class="h1 font-w700 text-white"><span class="h2 text-white-op">$</span> 2.980,00</div>
-	                                
-	                            </div>	                            
-	                        </a>
-	                    </div>
-					</div>
+					
 					<!-- END System Status -->
 
 					<!-- Charts -->
 					<div class="row">
                         <div class="col-lg-6">
+                            <div class="block block-themed">
+                                <div class="block-header bg-primary">
+                                    <ul class="block-options">
+                                        <li>
+                                            <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>
+                                        </li>
+                                        <li>
+                                            <button type="button" data-toggle="block-option" data-action="content_toggle"></button>
+                                        </li>
+                                    </ul>
+                                    <h3 class="block-title">DashBoard</h3>
+                                </div>
+                                <div class="block-content">
+                                    <div class="row item-push-2x text-center">
+                                        <div class="col-xs-6 col-sm-4">
+                                            <span class="chart" data-percent="86">
+                                                <span class="percent">86</span>
+                                            </span>
+                                            <div class="text-center">Solar Power</div>
+                                        </div>
+                                        <div class="col-xs-6 col-sm-4">
+                                            <span class="chart" data-percent="86">
+                                                <span class="percent">86</span>
+                                            </span>
+                                            <div class="text-center">System Output</div>
+                                        </div>
+                                        <div class="col-xs-6 col-sm-4">
+                                            <span class="chart" data-percent="86">
+                                                <span class="percent">86</span>
+                                            </span>
+                                            <div class="text-center">Battery Capacity</div>
+                                        </div>
+                                    </div>                                    
+                                </div>                          
+                            </div>
                             <div class="block block-themed resizeableblock">
                                 <div class="block-header bg-primary">
                                 	<ul class="block-options">
@@ -125,39 +126,88 @@
                                 </div>
                                 <div class="block-content ResizableContainer" style="height:450px;">
                                     <div class="js-flot-live" ></div>
-                                    <div class="form-group">
-                                        <label class="col-xs-12">Monitoring Parameters</label>
-                                        <div class="col-xs-12">
-                                            <label class="radio-inline" for="Pvvolts">
-                                                <input type="radio" id="Pvvolts" name="monitoring-parameters" value="Pvvolts"> Pvvolts
-                                            </label>
-                                            <label class="radio-inline" for="Pvcur">
-                                                <input type="radio" id="Pvcur" name="monitoring-parameters" value="Pvcur"> Pvcur
-                                            </label>
-                                            <label class="radio-inline" for="PVpow">
-                                                <input type="radio" id="PVpow" name="monitoring-parameters" value="PVpow"> PVpow
-                                            </label>
-                                            <label class="radio-inline" for="OutCur">
-                                                <input type="radio" id="OutCur" name="monitoring-parameters" value="OutCur"> OutCur
-                                            </label>
-                                            <label class="radio-inline" for="OutV">
-                                                <input type="radio" id="OutV" name="monitoring-parameters" value="OutV"> OutV
-                                            </label>
-                                            <label class="radio-inline" for="Outpow">
-                                                <input type="radio" id="Outpow" name="monitoring-parameters" value="Outpow"> Outpow
-                                            </label>
-                                            <label class="radio-inline" for="BattV">
-                                                <input type="radio" id="BattV" name="monitoring-parameters" value="BattV"> BattV
-                                            </label>
-                                            <label class="radio-inline" for="Wind">
-                                                <input type="radio" id="Wind" name="monitoring-parameters" value="Wind"> Wind
-                                            </label>
+                                    </br>
+                                    <div class="form-group">                                        
+                                        <div class="col-xs-6">
+                                            <label class="col-xs-7">Monitoring Parameters</label>
+                                            <select class="col-xs-5">
+                                                <option value="PVVolts">PV Volts</option>
+                                                <option value="PVCur">PV Currents</option>
+                                                <option value="PVPower">PV Power</option>
+                                                <option value="OutVolts">Out Volts</option>
+                                                <option value="OutCur">Out Currents</option>
+                                                <option value="OutPow">Output Power</option>
+                                                <option value="BattV">Battert Volts</option>
+                                                <option value="Wind">Wind</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <label class="col-xs-7">Time period</label>
+                                            <select class="col-xs-5">
+                                                <option value="min30">30 minutes</option>
+                                                <option value="hour1">1 hour</option>
+                                                <option value="hour5">5 hours</option>
+                                                <option value="hour12">12 hous</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
+                            <div class="block block-themed">
+                                <div class="block-header bg-primary">
+                                    <ul class="block-options">
+                                        <li>
+                                            <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>
+                                        </li>
+                                        <li>
+                                            <button type="button" data-toggle="block-option" data-action="content_toggle"></button>
+                                        </li>
+                                    </ul>
+                                    <h3 class="block-title">DashBoard</h3>
+                                </div>
+                                <div class="block-content">
+                                    <div class="row item-push-2x text-center">
+                                        <div class="col-lg-6">
+                                            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                                                <div class="block-content block-content-full bg-gray-lighter border-b">
+                                                    <div class="h1 font-w700"> 2.320,00<span class="h2 text-muted">KWh</span></div>
+                                                </div>
+                                                <div class="block-content block-content-full block-content-mini bg-success text-white">Total PV Energy Collected
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                                                <div class="block-content block-content-full bg-gray-lighter border-b">
+                                                    <div class="h1 font-w700"> 2.320,00<span class="h2 text-muted">KWh</span></div>
+                                                </div>
+                                                <div class="block-content block-content-full block-content-mini bg-success text-white">Total Energy Used
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                                                <div class="block-content block-content-full bg-gray-lighter border-b">
+                                                    <div class="h1 font-w700"> 2.320,00<span class="h2 text-muted">KWh</span></div>
+                                                </div>
+                                                <div class="block-content block-content-full block-content-mini bg-success text-white">Total Energy in or out of Battery
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                                                <div class="block-content block-content-full bg-gray-lighter border-b">
+                                                    <div class="h1 font-w700"> 2.320,00<span class="h2 text-muted">KWh</span></div>
+                                                </div>
+                                                <div class="block-content block-content-full block-content-mini bg-success text-white">Total Wind Energy Collected
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>                                    
+                                </div>                          
+                            </div>
                             <div class="block block-themed resizeableblock">
                                 <div class="block-header bg-primary">
                                     <ul class="block-options">
