@@ -162,36 +162,39 @@
                                     </br>
                                     <div class="form-group">                                        
                                         <div class="col-xs-6">
-                                            <label class="col-xs-6">Parameters1</label>
-                                            <select class="col-xs-6">
+                                            <label class="col-xs-5">Parameters1</label>
+                                            <select id="parameter1" class="col-xs-5">
                                                 <option value="PVVolts">PV Volts</option>
                                                 <option value="PVCur">PV Currents</option>
-                                                <option value="PVPower">PV Power</option>
-                                                <option value="OutVolts">Out Volts</option>
-                                                <option value="OutCur">Out Currents</option>
+                                                <option value="PVPow">PV Power</option>
+                                                <option value="OutVolts">Output Volts</option>
+                                                <option value="OutCur">Output Currents</option>
                                                 <option value="OutPow">Output Power</option>
-                                                <option value="BattV">Battert Volts</option>
+                                                <option value="BattV">Battery Volts</option>
                                                 <option value="Wind">Wind</option>
                                             </select>
-                                            <label class="col-xs-6">Parameters2</label>
-                                            <select class="col-xs-6">
-                                                <option value="Null"></option>
+                                            <label id="units1" class="col-xs-2">Volts</label>
+
+                                            <label class="col-xs-5">Parameters2</label>
+                                            <select id="parameter2" class="col-xs-5">
+                                                <option value=""></option>
                                                 <option value="PVVolts">PV Volts</option>
                                                 <option value="PVCur">PV Currents</option>
-                                                <option value="PVPower">PV Power</option>
-                                                <option value="OutVolts">Out Volts</option>
-                                                <option value="OutCur">Out Currents</option>
+                                                <option value="PVPow">PV Power</option>
+                                                <option value="OutVolts">Output Volts</option>
+                                                <option value="OutCur">Output Currents</option>
                                                 <option value="OutPow">Output Power</option>
-                                                <option value="BattV">Battert Volts</option>
+                                                <option value="BattV">Battery Volts</option>
                                                 <option value="Wind">Wind</option>
                                             </select>
+                                            <label id="units2" class="col-xs-2"></label>
                                         </div>
                                         <div class="col-xs-6">
-                                            <label class="col-xs-6">Time period</label>
-                                            <select class="col-xs-6">
-                                                <option value="min30">30 minutes</option>
-                                                <option value="hour1">1 hour</option>
-                                                <option value="hour5">5 hours</option>
+                                            <label class="col-xs-5">Time period</label>
+                                            <select id="timeperiod1" class="col-xs-6">
+                                                <option value="30">30 minutes</option>
+                                                <option value="60">1 hour</option>
+                                                <option value="300">5 hours</option>
                                             </select>
                                         </div>
                                     </div>

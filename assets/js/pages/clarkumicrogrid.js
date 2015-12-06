@@ -11,104 +11,31 @@ var PageCharts = function () {
 
         var $querydata = [];
 
-        function getRandomData() { // Random data generator
+        var $parameter1 = "PVVolts";
 
-            if ($dataLive.length > 0)
-                $dataLive = $dataLive.slice(1);
-            ////dsfdsfsafa
-            while ($dataLive.length < 300) {
-                var prev = $dataLive.length > 0 ? $dataLive[$dataLive.length - 1] : 50;
-                var y = prev + Math.random() * 10 - 5;
-                if (y < 0)
-                    y = 0;
-                if (y > 100)
-                    y = 100;
-                $dataLive.push(y);
-            }
+        var $parameter2 = "";
 
-            var res = [];
-            for (var i = 0; i < $dataLive.length; ++i)
-                res.push([i, $dataLive[i]]);
+        var $paradict = { "PVVolts": "PV Volts",
+            "PVCur": "PV Currents",
+            "PVPow": "PV Power",
+            "OutVolts": "Output Volts",
+            "OutCur": "Output Currents",
+            "OutPow": "Output Power",
+            "BattV": "Battery Volts",
+            "Wind": "Wind"
+        };
 
-            // Show live chart info
-            jQuery('.js-flot-live-info').html(y.toFixed(0) + ' W');
+        var $timeperiod1 = 30;
 
-            return res;
-        }
-
-        var $dataLive2 = [[], []];
-
-        function getRandomData2() { // Random data generator
-            if ($dataLive2[0].length > 0) {
-                $dataLive2[0] = $dataLive2[0].slice(1);
-                $dataLive2[1] = $dataLive2[1].slice(1);
-            }
-
-            while ($dataLive2[0].length < 300) {
-                var prev = $dataLive2[0].length > 0 ? $dataLive2[0][$dataLive2[0].length - 1] : 50;
-                var y = prev + Math.random() * 10 - 5;
-                if (y < 0)
-                    y = 0;
-                if (y > 100)
-                    y = 100;
-                $dataLive2[0].push(y);
-                $dataLive2[1].push(100 - y);
-            }
-            var series1 = {
-                label: "output",
-                data: []
-            };
-            var series2 = {
-                label: "input",
-                data: []
-            };
-            var data = [series1, series2];
-            for (var i = 0; i < $dataLive2[0].length; ++i) {
-                data[0].data.push([i, $dataLive2[0][i]]);
-                data[1].data.push([i, $dataLive2[1][i]]);
-            }
-
-            // Show live chart info
-            jQuery('.js-flot-live-info').html(y.toFixed(0) + ' W');
-
-            return data;
-        }
-
-        function getRandomData3(timenow) { // Random data generator x axis is time
-            if ($dataLive2[0].length > 0) {
-                $dataLive2[0] = $dataLive2[0].slice(1);
-                $dataLive2[1] = $dataLive2[1].slice(1);
-            }
-
-            while ($dataLive2[0].length < 300) {
-                var prev = $dataLive2[0].length > 0 ? $dataLive2[0][$dataLive2[0].length - 1] : 50;
-                var y = prev + Math.random() * 10 - 5;
-                if (y < 0)
-                    y = 0;
-                if (y > 100)
-                    y = 100;
-                $dataLive2[0].push(y);
-                $dataLive2[1].push(100 - y);
-            }
-            var series1 = {
-                label: "output",
-                data: []
-            };
-            var series2 = {
-                label: "input",
-                data: []
-            };
-            var updatedata = [series1, series2];
-            //push the update array into the new array
-            for (var i = 0; i < $dataLive2[0].length; ++i) {
-                updatedata[0].data.push([i * 100 + timenow, $dataLive2[0][i]]);
-                updatedata[1].data.push([i * 100 + timenow, $dataLive2[1][i]]);
-            }
-            // Show live chart info
-            jQuery('.js-flot-live-info').html(y.toFixed(0) + ' W');
-
-            return updatedata;
-        }
+        var $unitsdict = { "PVVolts": "Volts",
+            "PVCur": "Amperes",
+            "PVPow": "Watts",
+            "OutVolts": "Volts",
+            "OutCur": "Amperes",
+            "OutPow": "Watts",
+            "BattV": "Volts",
+            "Wind": "m/s"
+        };
 
         function getTableData(timenow) {
 
@@ -129,27 +56,37 @@ var PageCharts = function () {
             }
             else {
                 var series1 = {
-                    label: "output",
+                    label: $paradict[$parameter1],
                     data: []
                 };
-
-                var series2 = {
-                    label: "input",
-                    data: []
-                };
-
-                var updatedata = [series1]; //, series2];
 
                 var index = Math.floor(timenow / 100);
 
-                for (var i = 0; i < 300; ++i) {
-                    updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % 1440]["PVpow"]]);
-                    //updatedata[1].data.push([i * 100 + timenow, $querydata[(index+i)%1440]["OutPow"]]);
+                if ($parameter2 == "") {
+                    var updatedata = [series1];
+
+                    for (var i = 0; i < $timeperiod1; ++i) {
+                        updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % 1440][$parameter1]]);
+                    }
                 }
-                document.getElementById("solarvolts").value = $querydata[(index + 299) % 1440]["Pvvolts"];
-                document.getElementById("solarcur").value = $querydata[(index + 299) % 1440]["Pvcur"];
-                document.getElementById("outputvolts").value = $querydata[(index + 299) % 1440]["OutCur"];
-                document.getElementById("outputcur").value = $querydata[(index + 299) % 1440]["OutV"];
+                else {
+                    var series2 = {
+                        label: $paradict[$parameter2],
+                        data: []
+                    };
+
+                    var updatedata = [series1, series2];
+
+                    for (var i = 0; i < $timeperiod1; ++i) {
+                        updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % 1440][$parameter1]]);
+                        updatedata[1].data.push([i * 100 + timenow, $querydata[(index + i) % 1440][$parameter2]]);
+                    }
+                }
+
+                document.getElementById("solarvolts").value = $querydata[(index + 299) % 1440]["PVVolts"];
+                document.getElementById("solarcur").value = $querydata[(index + 299) % 1440]["PVCur"];
+                document.getElementById("outputvolts").value = $querydata[(index + 299) % 1440]["OutVolts"];
+                document.getElementById("outputcur").value = $querydata[(index + 299) % 1440]["OutCur"];
                 document.getElementById("batteryvoltage").value = $querydata[(index + 299) % 1440]["BattV"];
                 var keys = Object.keys($querydata[0]);
                 document.getElementById("batterycur").value = keys[1];
@@ -167,7 +104,7 @@ var PageCharts = function () {
                 mode: "time",
                 tickSize: [10, "second"],
                 min: timenow,
-                max: timenow + 29900,
+                max: timenow + ($timeperiod1 - 1) * 100,
                 twelveHourClock: false
             }
         };
@@ -179,7 +116,7 @@ var PageCharts = function () {
 
             timenow = timenow + 100;
             $chartLive.getAxes().xaxis.options.min = timenow;
-            $chartLive.getAxes().xaxis.options.max = timenow + 29900;
+            $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod1 - 1) * 100;
             $chartLive.setData(getTableData(timenow));
             $chartLive.setupGrid();
             $chartLive.draw();
@@ -195,6 +132,20 @@ var PageCharts = function () {
         $flotLive.resize(function () {
             $flotLive.css('height', $resizeableblock.height() - 140);
             $chartLive = jQuery.plot($flotLive, getTableData(timenow), options);
+        });
+
+        document.getElementById("parameter1").addEventListener("change", function () {
+            $parameter1 = document.getElementById("parameter1").value;
+            document.getElementById("units1").innerHTML = $unitsdict[$parameter1];
+        });
+
+        document.getElementById("parameter2").addEventListener("change", function () {
+            $parameter2 = document.getElementById("parameter2").value;
+            document.getElementById("units2").innerHTML = $unitsdict[$parameter2];
+        });
+
+        document.getElementById("timeperiod1").addEventListener("change", function () {
+            $timeperiod1 = document.getElementById("timeperiod1").value;
         });
     };
 
@@ -215,7 +166,7 @@ var PageCharts = function () {
             }],
             "graphs": [{
                 "id": "g1",
-                "valueField": "PVpow",
+                "valueField": "PVPow",
                 "balloonText": "<div style='margin:5px; font-size:19px;'><b>[[value]] W</b></div>"
             }, {
                 "id": "g2",
