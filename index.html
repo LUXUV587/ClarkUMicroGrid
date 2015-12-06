@@ -38,13 +38,6 @@
         <script src="assets/js/plugins/amcharts/themes/light.js"></script>
         <script src="assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
         <script src="assets/js/plugins/easypiechart/jquery.easypiechart.js"></script>
-        <script type="text/javascript">
-        $(function() {
-            $('.chart').easyPieChart({
-                //your configuration goes here
-            });
-        });
-        </script>
         
         <!-- Page JS Code -->
         <script src="assets/js/pages/clarkumicrogrid.js"></script>
@@ -92,25 +85,61 @@
                                 <div class="block-content">
                                     <div class="row item-push-2x text-center">
                                         <div class="col-xs-6 col-sm-4">
-                                            <span class="chart" data-percent="86">
-                                                <span class="percent">86</span>
+                                            <span class="chart" data-percent="80">
+                                                <span class="percent">80</span>
                                             </span>
-                                            <div>Solar Power</div>
                                             </br>
-                                            <label>Measured V</label>   
-                                            <div class="btn btn-default">63.5</div>
+                                            </br>
+                                            <div class="h3">Solar Power</div>
+                                            </br>
+                                            <div class="col-xs-7">
+                                                <label>PV Voltage</label>
+                                                <p></p>
+                                                <label>PV Current</label>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <input type="text" id="solarvolts" class="text-center" value="63.5" size="5" readonly="">
+                                                <p></p>
+                                                <input type="text" id="solarcur" class="text-center" value="11" size="5" readonly="">
+                                            </div>                                           
+                                        </div>
+                                        <div class="col-xs-6 col-sm-4">
+                                            <span class="chart" data-percent="70">
+                                                <span class="percent">70</span>
+                                            </span>
+                                            </br>
+                                            </br>
+                                            <div class="h3">System Output</div>
+                                            </br>
+                                            <div class="col-xs-8">
+                                                <label>Output Voltage</label>
+                                                <p></p>
+                                                <label>Output Current</label>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <input type="text" id="outputvolts" class="text-center" value="63.5" size="5" readonly="">
+                                                <p></p>
+                                                <input type="text" id="outputcur" class="text-center" value="11" size="5" readonly="">
+                                            </div>
                                         </div>
                                         <div class="col-xs-6 col-sm-4">
                                             <span class="chart" data-percent="86">
                                                 <span class="percent">86</span>
                                             </span>
-                                            <div class="text-center">System Output</div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-4">
-                                            <span class="chart" data-percent="86">
-                                                <span class="percent">86</span>
-                                            </span>
-                                            <div class="text-center">Battery Capacity</div>
+                                            </br>
+                                            </br>
+                                            <div class="h3">Battery Capacity</div>
+                                            </br>
+                                            <div class="col-xs-8">
+                                                <label>Battery Voltage</label>
+                                                <p></p>
+                                                <label>Battery Current</label>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <input type="text" id="batteryvoltage" class="text-center" value="63.5" size="5" readonly="">
+                                                <p></p>
+                                                <input type="text" id="batterycur" class="text-center" value="11" size="5" readonly="">
+                                            </div>
                                         </div>
                                     </div>
                                     </br>                                    
@@ -128,13 +157,25 @@
                                     </ul>
                                     <h3 class="block-title">Real Time</h3>
                                 </div>
-                                <div class="block-content ResizableContainer" style="height:450px;">
+                                <div class="block-content ResizableContainer" style="height:500px;">
                                     <div class="js-flot-live" ></div>
                                     </br>
                                     <div class="form-group">                                        
                                         <div class="col-xs-6">
-                                            <label class="col-xs-7">Monitoring Parameters</label>
-                                            <select class="col-xs-5">
+                                            <label class="col-xs-6">Parameters1</label>
+                                            <select class="col-xs-6">
+                                                <option value="PVVolts">PV Volts</option>
+                                                <option value="PVCur">PV Currents</option>
+                                                <option value="PVPower">PV Power</option>
+                                                <option value="OutVolts">Out Volts</option>
+                                                <option value="OutCur">Out Currents</option>
+                                                <option value="OutPow">Output Power</option>
+                                                <option value="BattV">Battert Volts</option>
+                                                <option value="Wind">Wind</option>
+                                            </select>
+                                            <label class="col-xs-6">Parameters2</label>
+                                            <select class="col-xs-6">
+                                                <option value="Null"></option>
                                                 <option value="PVVolts">PV Volts</option>
                                                 <option value="PVCur">PV Currents</option>
                                                 <option value="PVPower">PV Power</option>
@@ -146,12 +187,11 @@
                                             </select>
                                         </div>
                                         <div class="col-xs-6">
-                                            <label class="col-xs-7">Time period</label>
-                                            <select class="col-xs-5">
+                                            <label class="col-xs-6">Time period</label>
+                                            <select class="col-xs-6">
                                                 <option value="min30">30 minutes</option>
                                                 <option value="hour1">1 hour</option>
                                                 <option value="hour5">5 hours</option>
-                                                <option value="hour12">12 hours</option>
                                             </select>
                                         </div>
                                     </div>
@@ -173,6 +213,13 @@
                                 </div>
                                 <div class="block-content">
                                     <div class="row item-push-2x text-center">
+                                        <div class="col-lg-12">
+                                            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                                                <div class="block-content block-content-full bg-gray-lighter border-b">
+                                                    <p class="h1 font-w700">Time: <span id="realtime">134123</span></p>
+                                                </div>
+                                            </a>
+                                        </div>
                                         <div class="col-lg-6">
                                             <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
                                                 <div class="block-content block-content-full bg-gray-lighter border-b">

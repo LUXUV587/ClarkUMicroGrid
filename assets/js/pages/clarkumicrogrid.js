@@ -128,8 +128,6 @@ var PageCharts = function () {
                 });
             }
             else {
-
-
                 var series1 = {
                     label: "output",
                     data: []
@@ -140,14 +138,22 @@ var PageCharts = function () {
                     data: []
                 };
 
-                var updatedata = [series1];//, series2];
+                var updatedata = [series1]; //, series2];
 
                 var index = Math.floor(timenow / 100);
 
                 for (var i = 0; i < 300; ++i) {
-                    updatedata[0].data.push([i * 100 + timenow, $querydata[(index+i)%1440]["PVpow"]]);
+                    updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % 1440]["PVpow"]]);
                     //updatedata[1].data.push([i * 100 + timenow, $querydata[(index+i)%1440]["OutPow"]]);
                 }
+                document.getElementById("solarvolts").value = $querydata[(index + 299) % 1440]["Pvvolts"];
+                document.getElementById("solarcur").value = $querydata[(index + 299) % 1440]["Pvcur"];
+                document.getElementById("outputvolts").value = $querydata[(index + 299) % 1440]["OutCur"];
+                document.getElementById("outputcur").value = $querydata[(index + 299) % 1440]["OutV"];
+                document.getElementById("batteryvoltage").value = $querydata[(index + 299) % 1440]["BattV"];
+                var keys = Object.keys($querydata[0]);
+                document.getElementById("batterycur").value = keys[1];
+                document.getElementById("realtime").innerHTML = $querydata[(index + 299) % 1440]["date_time"];
             }
 
             return updatedata;
@@ -926,6 +932,20 @@ var PageCharts = function () {
         });
     };
 
+    var initeasypiechart = function () {
+        $('.chart').easyPieChart({
+            //your configuration goes here
+            size: 150,
+            delay: 3000,
+            barColor: '#69c',
+            trackColor: '#ace',
+            scaleColor: false,
+            lineWidth: 20,
+            lineCap: 'butt',
+            trackWidth: 16
+        });
+    };
+
     return {
         init: function () {
             // Init all charts
@@ -933,6 +953,7 @@ var PageCharts = function () {
             initintraday();
             initdailyaverage();
             initdatepicker();
+            initeasypiechart();
         }
     };
 } ();
