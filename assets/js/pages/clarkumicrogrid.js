@@ -43,7 +43,11 @@ var PageCharts = function () {
             "Wind": "m/s"
         };
 
-        function getTableData(timenow) {
+        var $totalpv = 0;
+
+        var $totaloutput = 0;
+
+        function getTableData() {
 
             var updatedata = [];
 
@@ -51,6 +55,11 @@ var PageCharts = function () {
 
                 function onDataReceived(series) {
                     $querydata = series;
+                                    
+                    for(i = 0, len = $querydata.length; i < len; i++) {
+                        $totalpv += parseFloat($querydata[i]["PVPow"])*60.0/3600000.0;
+                        $totaloutput += parseFloat($querydata[i]["OutPow"])*60.0/3600000.0;
+                    }
                 }
 
                 $.ajax({
@@ -87,19 +96,17 @@ var PageCharts = function () {
                     dataType: "json",
                     success: onDataPush
                 });
-                
+
                 var series1 = {
                     label: $paradict[$parameter1],
                     data: []
                 };
 
-                var index = Math.floor(timenow / 100);
-
                 if ($parameter2 == "") {
                     updatedata = [series1];
 
                     for (var i = 0; i < $timeperiod2; ++i) {
-                        updatedata[0].data.push([i * 100 + timenow, $querydata[i][$parameter1]]);
+                        updatedata[0].data.push([new Date($querydata[i]["date_time"]).getTime(), $querydata[i][$parameter1]]);
                     }
                 }
                 else {
@@ -111,8 +118,8 @@ var PageCharts = function () {
                     updatedata = [series1, series2];
 
                     for (var i = 0; i < $timeperiod2; ++i) {
-                        updatedata[0].data.push([i * 100 + timenow, $querydata[i][$parameter1]]);
-                        updatedata[1].data.push([i * 100 + timenow, $querydata[i][$parameter2]]);
+                        updatedata[0].data.push([new Date($querydata[i]["date_time"]).getTime(), $querydata[i][$parameter1]]);
+                        updatedata[1].data.push([new Date($querydata[i]["date_time"]).getTime(), $querydata[i][$parameter2]]);
                     }
                 }
 
@@ -154,33 +161,40 @@ var PageCharts = function () {
             xaxis: { show: true,
                 mode: "time",
                 timeformat: "%y/%m/%d %H:%M:%S",
-                tickSize: [10, "second"],
-                min: timenow + ($timeperiod2 - $timeperiod1) * 100,
-                max: timenow + ($timeperiod2 - 1) * 100,
+                tickSize: [60, "minute"],
+                timezone: "browser",
+                min: 0, 
+                max: 100,
                 twelveHourClock: false
             }
         };
 
-        var timenow = Date.now();
-
         function updateChartLive() { // Update live chart
             if ($querydata.length == 0) {
-                getTableData(timenow);
+                getTableData();
                 setTimeout(updateChartLive, 100);
             }
             else {
                 $indexrows = ($indexrows + 1) % $countrows;
-                timenow = timenow + 100;
-                $chartLive.getAxes().xaxis.options.min = timenow + ($timeperiod2 - $timeperiod1) * 100;
-                $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod2 - 1) * 100;
-                $chartLive.setData(getTableData(timenow));
+
+                $totalpv = $totalpv + parseFloat($querydata[$timeperiod2 - 1]["PVPow"])*60.0/3600000.0;
+                $totaloutput = $totaloutput + parseFloat($querydata[$timeperiod2 - 1]["OutPow"])*60.0/3600000.0;
+
+                document.getElementById("totalpv").innerHTML = $totalpv.toFixed(3);
+                document.getElementById("totaloutput").innerHTML = $totaloutput.toFixed(3);
+
+                xaxismin = new Date($querydata[$timeperiod2 - $timeperiod1]["date_time"]).getTime();
+                xaxismax = new Date($querydata[$timeperiod2 - 1]["date_time"]).getTime();
+                $chartLive.getAxes().xaxis.options.min = xaxismin;
+                $chartLive.getAxes().xaxis.options.max = xaxismax;
+                $chartLive.setData(getTableData());
                 $chartLive.setupGrid();
                 $chartLive.draw();
                 setTimeout(updateChartLive, 100);
             }
         }
 
-        var $chartLive = jQuery.plot($flotLive, getTableData(timenow), options); // Init live chart
+        var $chartLive = jQuery.plot($flotLive, getTableData(), options); // Init live chart
 
         updateChartLive(); // Start getting new data
 
@@ -188,7 +202,7 @@ var PageCharts = function () {
 
         $flotLive.resize(function () {
             $flotLive.css('height', $resizeableblock.height() - 140);
-            $chartLive = jQuery.plot($flotLive, getTableData(timenow), options);
+            $chartLive = jQuery.plot($flotLive, getTableData(), options);
         });
 
         document.getElementById("parameter1").addEventListener("change", function () {
