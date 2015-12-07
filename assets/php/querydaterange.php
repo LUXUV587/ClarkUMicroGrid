@@ -1,10 +1,8 @@
 <?php
-    $date = $_REQUEST["date"];
-
     require_once 'login.php';
     $conn = new mysqli($hn, $un, $pw, $db);
     if ($conn->connect_error) die($conn->connect_error);
-    $query = "SELECT * FROM clarku_microgrid.monitoring_data where DATE(date_time) = '$date'";
+    $query = "SELECT date(min(date_time)) as start_date,date(max(date_time)) as end_date FROM monitoring_data";
     $result = $conn->query($query);
     if (!$result) die($conn->error);
     $rows = $result->num_rows;

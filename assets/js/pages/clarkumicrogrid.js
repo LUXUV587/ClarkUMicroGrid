@@ -120,6 +120,7 @@ var PageCharts = function () {
             grid: { hoverable: true },
             xaxis: { show: true,
                 mode: "time",
+                timeformat: "%y/%m/%d %H:%M:%S",
                 tickSize: [10, "second"],
                 min: timenow,
                 max: timenow + ($timeperiod1 - 1) * 100,
@@ -168,72 +169,151 @@ var PageCharts = function () {
     };
 
     var initintraday = function () {
-        var $meanparameter = "PVVolts"
+        var $meanparameter = "PVVolts";
 
-        var $paradict = { "PVVolts": "PV Volts",
-            "PVCur": "PV Currents",
-            "PVPow": "PV Power",
-            "OutVolts": "Output Volts",
-            "OutCur": "Output Currents",
-            "OutPow": "Output Power",
-            "BattV": "Battery Volts",
-            "Wind": "Wind"
+        var $querydata = [];
+
+        var $startdate = "2015-07-20";
+
+        var $enddate = "2015-08-04";
+
+        var $paradict = { "PVVolts": "PV Volts (V)",
+            "PVCur": "PV Currents (A)",
+            "PVPow": "PV Power (W)",
+            "OutVolts": "Output Volts (V)",
+            "OutCur": "Output Currents (A)",
+            "OutPow": "Output Power (W)",
+            "BattV": "Battery Volts (V)",
+            "Wind": "Wind (m/s)"
         };
 
-        var chart = AmCharts.makeChart("intradaychartdiv", {
-            "type": "serial",
-            "theme": "light",
-            "marginRight": 80,
-            "dataLoader": {
-                "url": "assets/php/queryintraday.php"
-            },
-            "valueAxes": [{
-                "position": "left",
-                "title": $paradict[$meanparameter]
-            }],
-            "graphs": [{
-                "id": "g1",
-                "valueField": $meanparameter,
-                "balloonText": "<div style='margin:5px; font-size:19px;'><b>[[value]] W</b></div>"
-            }],
-            "chartScrollbar": {
-                "graph": "g1",
-                "scrollbarHeight": 80,
-                "backgroundAlpha": 0,
-                "selectedBackgroundAlpha": 0.1,
-                "selectedBackgroundColor": "#888888",
-                "graphFillAlpha": 0,
-                "graphLineAlpha": 0.5,
-                "selectedGraphFillAlpha": 0,
-                "selectedGraphLineAlpha": 1,
-                "autoGridCount": true,
-                "color": "#AAAAAA"
-            },
-            "chartCursor": {
-                "categoryBalloonDateFormat": "YYYY MM DD JJ:NN",
-                "cursorPosition": "mouse"
-            },
-            "categoryField": "date_time",
-            "dataFormat": "YYYY-MM-DD JJ:NN:SS",
-            "categoryAxis": {
-                "minPeriod": "mm",
-                "parseDates": true
-            },
-            "export": {
-                "enabled": true
-            }
+        $.getJSON('assets/php/querydaterange.php', function (jsonData) {
+            $querydata = jsonData;
+        })
+        .done(function (data) {
+            $startdate = $querydata[0]["start_date"];
+
+            $enddate = $querydata[0]["end_date"];
+
+            $('#intradaydatepicker input').datepicker("remove");
+
+            intradaydatepicker();
+
+            $chart = AmCharts.makeChart("intradaychartdiv", {
+                "type": "serial",
+                "theme": "light",
+                "marginRight": 80,
+                "dataLoader": {
+                    "url": "assets/php/queryintraday.php?date=" + $querydata[0]["end_date"],
+                    "format": "json"
+                },
+                "valueAxes": [{
+                    "position": "left",
+                    "title": $paradict[$meanparameter]
+                }],
+                "graphs": [{
+                    "id": "g1",
+                    "valueField": $meanparameter,
+                    "balloonText": "<div style='margin:5px; font-size:19px;'><b>[[value]]</b></div>"
+                }],
+                "chartScrollbar": {
+                    "graph": "g1",
+                    "scrollbarHeight": 80,
+                    "backgroundAlpha": 0,
+                    "selectedBackgroundAlpha": 0.1,
+                    "selectedBackgroundColor": "#888888",
+                    "graphFillAlpha": 0,
+                    "graphLineAlpha": 0.5,
+                    "selectedGraphFillAlpha": 0,
+                    "selectedGraphLineAlpha": 1,
+                    "autoGridCount": true,
+                    "color": "#AAAAAA"
+                },
+                "chartCursor": {
+                    "categoryBalloonDateFormat": "YYYY MM DD JJ:NN",
+                    "cursorPosition": "mouse"
+                },
+                "categoryField": "date_time",
+                "dataFormat": "YYYY-MM-DD JJ:NN:SS",
+                "categoryAxis": {
+                    "minPeriod": "mm",
+                    "parseDates": true
+                },
+                "export": {
+                    "enabled": true
+                }
+            });
         });
+
+        var $chart;
 
         document.getElementById("meanparameter").addEventListener("change", function () {
             $meanparameter = document.getElementById("meanparameter").value;
-            chart.graphs[0]["valueField"] = $meanparameter;
-            chart.valueAxes[0]["title"] = $paradict[$meanparameter];
-            chart.validateData();
+            $chart.graphs[0]["valueField"] = $meanparameter;
+            $chart.valueAxes[0]["title"] = $paradict[$meanparameter];
+            $chart.validateData();
         });
 
-        $('#intradaydatepicker input').datepicker({
-            autoclose: true
-        });
+        intradaydatepicker();
+
+        function intradaydatepicker() {
+            $('#intradaydatepicker input').datepicker({
+                startDate: $startdate,
+                endDate: $enddate,
+                autoclose: true
+            })
+            .on('changeDate', datechanged);
+
+            function datechanged() {
+                $(this).datepicker('hide');
+                var date = $("#intraday-datepicker").val();
+                $chart = AmCharts.makeChart("intradaychartdiv", {
+                    "type": "serial",
+                    "theme": "light",
+                    "marginRight": 80,
+                    "dataLoader": {
+                        "url": "assets/php/queryintraday.php?date=" + date,
+                        "format": "json"
+                    },
+                    "valueAxes": [{
+                        "position": "left",
+                        "title": $paradict[$meanparameter]
+                    }],
+                    "graphs": [{
+                        "id": "g1",
+                        "valueField": $meanparameter,
+                        "balloonText": "<div style='margin:5px; font-size:19px;'><b>[[value]]</b></div>"
+                    }],
+                    "chartScrollbar": {
+                        "graph": "g1",
+                        "scrollbarHeight": 80,
+                        "backgroundAlpha": 0,
+                        "selectedBackgroundAlpha": 0.1,
+                        "selectedBackgroundColor": "#888888",
+                        "graphFillAlpha": 0,
+                        "graphLineAlpha": 0.5,
+                        "selectedGraphFillAlpha": 0,
+                        "selectedGraphLineAlpha": 1,
+                        "autoGridCount": true,
+                        "color": "#AAAAAA"
+                    },
+                    "chartCursor": {
+                        "categoryBalloonDateFormat": "YYYY MM DD JJ:NN",
+                        "cursorPosition": "mouse"
+                    },
+                    "categoryField": "date_time",
+                    "dataFormat": "YYYY-MM-DD JJ:NN:SS",
+                    "categoryAxis": {
+                        "minPeriod": "mm",
+                        "parseDates": true
+                    },
+                    "export": {
+                        "enabled": true
+                    }
+                });
+            }
+        }
+
     };
 
     var initeasypiechart = function () {
