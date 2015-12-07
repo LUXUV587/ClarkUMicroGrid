@@ -1,8 +1,10 @@
 <?php
+    $query = $_REQUEST["query"];
+
     require_once 'login.php';
     $conn = new mysqli($hn, $un, $pw, $db);
     if ($conn->connect_error) die($conn->connect_error);
-    $query = "SELECT * FROM monitoring_data";
+    //$query = "SELECT * FROM monitoring_data";
     $result = $conn->query($query);
     if (!$result) die($conn->error);
     $rows = $result->num_rows;
