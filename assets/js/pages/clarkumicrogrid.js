@@ -29,6 +29,10 @@ var PageCharts = function () {
 
         var $timeperiod2 = 300;
 
+        var $countrows = 1000;
+
+        var $indexrows = $timeperiod2;
+
         var $unitsdict = { "PVVolts": "Volts",
             "PVCur": "Amperes",
             "PVPow": "Watts",
@@ -55,8 +59,35 @@ var PageCharts = function () {
                     dataType: "json",
                     success: onDataReceived
                 });
+
+                function onDataCount(series) {
+                    $countrows = parseInt(series[0]["count"]);
+                }
+
+                $.ajax({
+                    url: $dataurl + "SELECT COUNT(*) as count FROM monitoring_data",
+                    type: "GET",
+                    dataType: "json",
+                    success: onDataCount
+                });
             }
             else {
+
+                while ($querydata.length > $timeperiod2) {
+                    $querydata = $querydata.slice(1);
+                }
+
+                function onDataPush(series) {
+                    $querydata.push(series[0]);
+                }
+
+                $.ajax({
+                    url: $dataurl + 'SELECT * FROM monitoring_data ORDER BY id LIMIT ' + String($indexrows - 1) + ',1',
+                    type: "GET",
+                    dataType: "json",
+                    success: onDataPush
+                });
+                
                 var series1 = {
                     label: $paradict[$parameter1],
                     data: []
@@ -68,7 +99,7 @@ var PageCharts = function () {
                     updatedata = [series1];
 
                     for (var i = 0; i < $timeperiod2; ++i) {
-                        updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % $timeperiod2][$parameter1]]);
+                        updatedata[0].data.push([i * 100 + timenow, $querydata[i][$parameter1]]);
                     }
                 }
                 else {
@@ -88,29 +119,29 @@ var PageCharts = function () {
                 var maxpower = 300.0;
 
                 //PV info
-                document.getElementById("solarvolts").value = $querydata[(index + 299) % $timeperiod2]["PVVolts"];
-                document.getElementById("solarcur").value = $querydata[(index + 299) % $timeperiod2]["PVCur"];
-                document.getElementById("solarpow").value = $querydata[(index + 299) % $timeperiod2]["PVPow"];
+                document.getElementById("solarvolts").value = $querydata[$timeperiod2 - 1]["PVVolts"];
+                document.getElementById("solarcur").value = $querydata[$timeperiod2 - 1]["PVCur"];
+                document.getElementById("solarpow").value = $querydata[$timeperiod2 - 1]["PVPow"];
                 var chart = window.chart = $('#pvpiechart .chart').data('easyPieChart');
-                chart.update(Math.round($querydata[(index + 299) % $timeperiod2]["PVPow"] / maxpower * 100));
-                document.getElementById("pvper").innerHTML = Math.round($querydata[(index + 299) % $timeperiod2]["PVPow"] / maxpower * 100);
+                chart.update(Math.round($querydata[$timeperiod2 - 1]["PVPow"] / maxpower * 100));
+                document.getElementById("pvper").innerHTML = Math.round($querydata[$timeperiod2 - 1]["PVPow"] / maxpower * 100);
 
                 //Output info
-                document.getElementById("outputvolts").value = $querydata[(index + 299) % $timeperiod2]["OutVolts"];
-                document.getElementById("outputcur").value = $querydata[(index + 299) % $timeperiod2]["OutCur"];
-                document.getElementById("outputpow").value = $querydata[(index + 299) % $timeperiod2]["OutPow"];
+                document.getElementById("outputvolts").value = $querydata[$timeperiod2 - 1]["OutVolts"];
+                document.getElementById("outputcur").value = $querydata[$timeperiod2 - 1]["OutCur"];
+                document.getElementById("outputpow").value = $querydata[$timeperiod2 - 1]["OutPow"];
                 var chart = window.chart = $('#outputpiechart .chart').data('easyPieChart');
-                chart.update(Math.round($querydata[(index + 299) % $timeperiod2]["OutPow"] / maxpower * 100));
-                document.getElementById("outputper").innerHTML = Math.round($querydata[(index + 299) % $timeperiod2]["OutPow"] / maxpower * 100);
+                chart.update(Math.round($querydata[$timeperiod2 - 1]["OutPow"] / maxpower * 100));
+                document.getElementById("outputper").innerHTML = Math.round($querydata[$timeperiod2 - 1]["OutPow"] / maxpower * 100);
 
                 //Output info
-                document.getElementById("batteryvoltage").value = $querydata[(index + 299) % $timeperiod2]["BattV"];
+                document.getElementById("batteryvoltage").value = $querydata[$timeperiod2 - 1]["BattV"];
                 var chart = window.chart = $('#batterypiechart .chart').data('easyPieChart');
-                chart.update(Math.round($querydata[(index + 299) % $timeperiod2]["BattV"] / 48.0 * 100));
-                document.getElementById("batteryper").innerHTML = Math.round($querydata[(index + 299) % $timeperiod2]["BattV"] / 48.0 * 100);
+                chart.update(Math.round($querydata[$timeperiod2 - 1]["BattV"] / 48.0 * 100));
+                document.getElementById("batteryper").innerHTML = Math.round($querydata[$timeperiod2 - 1]["BattV"] / 48.0 * 100);
 
                 var keys = Object.keys($querydata[0]);
-                document.getElementById("realtime").innerHTML = $querydata[(index + 299) % $timeperiod2]["date_time"];
+                document.getElementById("realtime").innerHTML = $querydata[$timeperiod2 - 1]["date_time"];
             }
 
             return updatedata;
@@ -133,15 +164,20 @@ var PageCharts = function () {
         var timenow = Date.now();
 
         function updateChartLive() { // Update live chart
-
-
-            timenow = timenow + 100;
-            $chartLive.getAxes().xaxis.options.min = timenow + ($timeperiod2 - $timeperiod1) * 100;
-            $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod2 - 1) * 100;
-            $chartLive.setData(getTableData(timenow));
-            $chartLive.setupGrid();
-            $chartLive.draw();
-            setTimeout(updateChartLive, 100);
+            if ($querydata.length == 0) {
+                getTableData(timenow);
+                setTimeout(updateChartLive, 100);
+            }
+            else {
+                $indexrows = ($indexrows + 1) % $countrows;
+                timenow = timenow + 100;
+                $chartLive.getAxes().xaxis.options.min = timenow + ($timeperiod2 - $timeperiod1) * 100;
+                $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod2 - 1) * 100;
+                $chartLive.setData(getTableData(timenow));
+                $chartLive.setupGrid();
+                $chartLive.draw();
+                setTimeout(updateChartLive, 100);
+            }
         }
 
         var $chartLive = jQuery.plot($flotLive, getTableData(timenow), options); // Init live chart
