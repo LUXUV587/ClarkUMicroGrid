@@ -41,7 +41,7 @@ var PageCharts = function () {
 
         function getTableData(timenow) {
 
-            updatedata = [];
+            var updatedata = [];
 
             if ($querydata.length == 0) {
 
@@ -65,9 +65,9 @@ var PageCharts = function () {
                 var index = Math.floor(timenow / 100);
 
                 if ($parameter2 == "") {
-                    var updatedata = [series1];
+                    updatedata = [series1];
 
-                    for (var i = 0; i < $timeperiod1; ++i) {
+                    for (var i = 0; i < $timeperiod2; ++i) {
                         updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % $timeperiod2][$parameter1]]);
                     }
                 }
@@ -77,11 +77,11 @@ var PageCharts = function () {
                         data: []
                     };
 
-                    var updatedata = [series1, series2];
+                    updatedata = [series1, series2];
 
-                    for (var i = 0; i < $timeperiod1; ++i) {
-                        updatedata[0].data.push([i * 100 + timenow, $querydata[(index + i) % $timeperiod2][$parameter1]]);
-                        updatedata[1].data.push([i * 100 + timenow, $querydata[(index + i) % $timeperiod2][$parameter2]]);
+                    for (var i = 0; i < $timeperiod2; ++i) {
+                        updatedata[0].data.push([i * 100 + timenow, $querydata[i][$parameter1]]);
+                        updatedata[1].data.push([i * 100 + timenow, $querydata[i][$parameter2]]);
                     }
                 }
 
@@ -124,8 +124,8 @@ var PageCharts = function () {
                 mode: "time",
                 timeformat: "%y/%m/%d %H:%M:%S",
                 tickSize: [10, "second"],
-                min: timenow,
-                max: timenow + ($timeperiod1 - 1) * 100,
+                min: timenow + ($timeperiod2 - $timeperiod1) * 100,
+                max: timenow + ($timeperiod2 - 1) * 100,
                 twelveHourClock: false
             }
         };
@@ -136,8 +136,8 @@ var PageCharts = function () {
 
 
             timenow = timenow + 100;
-            $chartLive.getAxes().xaxis.options.min = timenow;
-            $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod1 - 1) * 100;
+            $chartLive.getAxes().xaxis.options.min = timenow + ($timeperiod2 - $timeperiod1) * 100;
+            $chartLive.getAxes().xaxis.options.max = timenow + ($timeperiod2 - 1) * 100;
             $chartLive.setData(getTableData(timenow));
             $chartLive.setupGrid();
             $chartLive.draw();
